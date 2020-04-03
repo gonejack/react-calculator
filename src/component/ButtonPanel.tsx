@@ -4,13 +4,12 @@ import Button from "./Button";
 import "./ButtonPanel.css";
 
 type ButtonPanelProps = {
-    clickHandler: (buttonName: string) => void
+    clickHandler: (btn: string) => void
 }
 
 class ButtonPanel extends Component<ButtonPanelProps, {}> {
-
-    onClick = (buttonName: string) => {
-        this.props.clickHandler(buttonName);
+    onClick = (btn: string) => {
+        this.props.clickHandler(btn);
     };
 
     render() {

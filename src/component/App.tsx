@@ -16,12 +16,12 @@ type AppState = {
 class App extends Component<{}, AppState> {
     state = {
         total    : "",
-        next     : "",
+        next     : "0",
         operation: "",
     };
 
-    handleClick = (buttonName: string) => {
-        this.setState({...this.calculate(this.state, buttonName)});
+    onClick = (btn: string) => {
+        this.setState({...this.calculate(this.state, btn)});
     };
 
     /**
@@ -33,8 +33,8 @@ class App extends Component<{}, AppState> {
      *   next:String       the next number to be operated on with the total
      *   operation:String  +, -, etc.
      */
-    calculate(obj: AppState, buttonName: string): {} {
-        if (buttonName === "AC") {
+    calculate(stat: AppState, btn: string): {} {
+        if (btn === "AC") {
             return {
                 total    : "",
                 next     : "",
@@ -42,65 +42,56 @@ class App extends Component<{}, AppState> {
             };
         }
 
-        if (isNumber(buttonName)) {
-            if (buttonName === "0" && obj.next === "0") {
+        if (isNumber(btn)) {
+            if (btn === "0" && stat.next === "0") {
                 return {};
             }
             // If there is an operation, update next
-            if (obj.operation) {
-                if (obj.next) {
-                    return {next: obj.next + buttonName};
+            if (stat.operation) {
+                if (stat.next) {
+                    return {next: stat.next + btn};
                 }
-                return {next: buttonName};
+                return {next: btn};
             }
             // If there is no operation, update next and clear the value
-            if (obj.next) {
-                const next = obj.next === "0" ? buttonName : obj.next + buttonName;
-                return {
-                    next,
-                    total: "",
-                };
+            if (stat.next) {
+                const next = stat.next === "0" ? btn : stat.next + btn;
+
+                return {next, total: "",};
             }
-            return {
-                next : buttonName,
-                total: "",
-            };
+            return {next: btn, total: "",};
         }
 
-        if (buttonName === "%") {
-            if (obj.operation && obj.next) {
-                const result = operate(obj.total, obj.next, obj.operation);
+        if (btn === "%") {
+            if (stat.operation && stat.next) {
+                const result = operate(stat.total, stat.next, stat.operation);
                 return {
                     total    : Big(result).div(Big("100")).toString(),
                     next     : "",
                     operation: "",
                 };
             }
-            if (obj.next) {
-                return {
-                    next: Big(obj.next)
-                        .div(Big("100"))
-                        .toString(),
-                };
+            if (stat.next) {
+                return {next: Big(stat.next).div(Big("100")).toString()};
             }
             return {};
         }
 
-        if (buttonName === ".") {
-            if (obj.next) {
+        if (btn === ".") {
+            if (stat.next) {
                 // ignore a . if the next number already has one
-                if (obj.next.includes(".")) {
+                if (stat.next.includes(".")) {
                     return {};
                 }
-                return {next: obj.next + "."};
+                return {next: stat.next + "."};
             }
             return {next: "0."};
         }
 
-        if (buttonName === "=") {
-            if (obj.next && obj.operation) {
+        if (btn === "=") {
+            if (stat.next && stat.operation) {
                 return {
-                    total    : operate(obj.total, obj.next, obj.operation),
+                    total    : operate(stat.total, stat.next, stat.operation),
                     next     : "",
                     operation: "",
                 };
@@ -110,12 +101,12 @@ class App extends Component<{}, AppState> {
             }
         }
 
-        if (buttonName === "+/-") {
-            if (obj.next) {
-                return {next: (-1 * parseFloat(obj.next)).toString()};
+        if (btn === "+/-") {
+            if (stat.next) {
+                return {next: (-1 * parseFloat(stat.next)).toString()};
             }
-            if (obj.total) {
-                return {total: (-1 * parseFloat(obj.total)).toString()};
+            if (stat.total) {
+                return {total: (-1 * parseFloat(stat.total)).toString()};
             }
             return {};
         }
@@ -129,26 +120,26 @@ class App extends Component<{}, AppState> {
         // }
 
         // User pressed an operation button and there is an existing operation
-        if (obj.operation) {
+        if (stat.operation) {
             return {
-                total    : operate(obj.total, obj.next, obj.operation),
+                total    : operate(stat.total, stat.next, stat.operation),
                 next     : "",
-                operation: buttonName,
+                operation: btn,
             };
         }
 
         // no operation yet, but the user typed one
 
         // The user hasn't typed a number yet, just save the operation
-        if (!obj.next) {
-            return {operation: buttonName};
+        if (!stat.next) {
+            return {operation: btn};
         }
 
         // save the operation and shift 'next' into 'total'
         return {
-            total    : obj.next,
+            total    : stat.next,
             next     : "",
-            operation: buttonName,
+            operation: btn,
         };
     }
 
@@ -156,7 +147,7 @@ class App extends Component<{}, AppState> {
         return (
             <div className="component-app">
                 <Display value={this.state.next || this.state.total || "0"}/>
-                <ButtonPanel clickHandler={this.handleClick}/>
+                <ButtonPanel clickHandler={this.onClick}/>
             </div>
         );
     }
