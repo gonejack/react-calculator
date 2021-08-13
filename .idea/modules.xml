@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/react-calculator-ts.iml" filepath="$PROJECT_DIR$/react-calculator-ts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/react-calculator.iml" filepath="$PROJECT_DIR$/react-calculator.iml" />
     </modules>
   </component>
 </project>
